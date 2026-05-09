@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Development log for Take Care of the Island." />
+    <title>Development Log | Take Care of the Island</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="page-devlog">
+    <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
+
+    <header class="site-header" id="top">
+      <div class="header-inner">
+        <a class="brand" href="index.html#top">Take Care of the Island</a>
+        <nav class="nav-main" aria-label="Primary">
+          <a href="index.html#features" data-i18n="nav.features">Features</a>
+          <a href="index.html#gallery" data-i18n="nav.gallery">Gallery</a>
+          <a href="devlog.html" aria-current="page" data-i18n="nav.devlog">Dev Log</a>
+          <a
+            href="https://ignissolarisstudio.com/?lang=en#welcome"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-studio-link
+            data-i18n="nav.studio"
+            >Studio</a
+          >
+        </nav>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-current="true">EN</button>
+          <span aria-hidden="true">/</span>
+          <button type="button" data-lang="zh">中文</button>
+          <span aria-hidden="true">/</span>
+          <button type="button" data-lang="fr">FR</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="sub-main" id="main">
+      <div class="section__inner devlog-page">
+        <header class="section__head devlog-page__head">
+          <h1 class="section__title devlog-page__title" data-i18n="devlog.pageTitle">Development log</h1>
+        </header>
+        <div class="devlog-timeline" id="devlog-timeline"></div>
+        <p class="devlog-back">
+          <a href="index.html#top" data-i18n="devlog.backHome">Back to homepage</a>
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-bar">
+        <p class="footer-copy">
+          © <span id="y"></span> <span data-i18n="footer.copyLine"></span>
+        </p>
+        <nav class="footer-links" aria-label="Footer">
+          <a
+            href="https://ignissolarisstudio.com/?lang=en#welcome"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-studio-link
+            data-i18n="footer.visitStudio"
+            >Visit studio</a
+          >
+          <a href="index.html#top" data-i18n="footer.top">Back to top</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="main.js" defer></script>
+  </body>
+</html>
