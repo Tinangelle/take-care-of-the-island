@@ -6,16 +6,15 @@
   var STR = {
     en: {
       "a11y.skip": "Skip to content",
+      "nav.home": "Home",
       "nav.features": "Features",
       "nav.gallery": "Gallery",
       "nav.devlog": "Dev Log",
-      "nav.studio": "Studio",
+      "nav.studio": "Ignis Solaris Studio",
       "hero.eyebrow": "Turn-based strategy · simulation",
       "hero.tagline":
         "Lead the island through seasons and shocks: procedural organ maps, metabolic crises, and calm, tactical decisions layered over living systems.",
-      "hero.cta.gallery": "View gallery",
-      "hero.cta.devlog": "Dev log",
-      "hero.scroll": "Scroll to explore",
+      "hero.cta.explore": "Explore the game",
       "features.title": "Game features",
       "features.f1.title": "Turn-based strategy",
       "features.f1.body":
@@ -52,16 +51,15 @@
     },
     zh: {
       "a11y.skip": "跳到正文",
+      "nav.home": "首页",
       "nav.features": "特色",
       "nav.gallery": "画廊",
       "nav.devlog": "开发日志",
-      "nav.studio": "工作室",
+      "nav.studio": "Ignis Solaris Studio",
       "hero.eyebrow": "回合制策略 · 模拟",
       "hero.tagline":
         "执掌一座随季节与冲击起伏的岛屿：程序化「器官地图」、代谢层级危机与温柔而明确的战术取舍。",
-      "hero.cta.gallery": "查看画廊",
-      "hero.cta.devlog": "开发日志",
-      "hero.scroll": "向下浏览",
+      "hero.cta.explore": "探索游戏",
       "features.title": "游戏特色",
       "features.f1.title": "回合制策略",
       "features.f1.body":
@@ -97,16 +95,15 @@
     },
     fr: {
       "a11y.skip": "Aller au contenu",
+      "nav.home": "Accueil",
       "nav.features": "Caractéristiques",
       "nav.gallery": "Galerie",
       "nav.devlog": "Journal de dev",
-      "nav.studio": "Studio",
+      "nav.studio": "Ignis Solaris Studio",
       "hero.eyebrow": "Stratégie au tour par tour · simulation",
       "hero.tagline":
         "Guidez l’île à travers les saisons et les chocs : cartes « organiques » procédurales, crises métaboliques et décisions tactiques posées, calmes et lisibles.",
-      "hero.cta.gallery": "Voir la galerie",
-      "hero.cta.devlog": "Journal de dev",
-      "hero.scroll": "Faites défiler",
+      "hero.cta.explore": "Explorer le jeu",
       "features.title": "Caractéristiques",
       "features.f1.title": "Stratégie au tour par tour",
       "features.f1.body":

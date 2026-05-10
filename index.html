@@ -8,52 +8,58 @@
       content="Take Care of the Island — turn-based strategy simulation with procedural maps and metabolic crises."
     />
     <title>Take Care of the Island | Ignis Solaris Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
 
-    <header class="site-header" id="top">
-      <div class="header-inner">
-        <a class="brand" href="index.html#top">Take Care of the Island</a>
-        <nav class="nav-main" aria-label="Primary">
-          <a href="#features" data-i18n="nav.features">Features</a>
-          <a href="#gallery" data-i18n="nav.gallery">Gallery</a>
-          <a href="devlog.html" data-i18n="nav.devlog">Dev Log</a>
-          <a
-            href="https://ignissolarisstudio.com/?lang=en#welcome"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-studio-link
-            data-i18n="nav.studio"
-            >Studio</a
-          >
-        </nav>
-        <div class="lang-switch" role="group" aria-label="Language">
-          <button type="button" data-lang="en" aria-current="true">EN</button>
-          <span aria-hidden="true">/</span>
-          <button type="button" data-lang="zh">中文</button>
-          <span aria-hidden="true">/</span>
-          <button type="button" data-lang="fr">FR</button>
+    <header class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-media" aria-hidden="true"></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <nav class="hero-nav" aria-label="Primary">
+        <div class="hero-nav-inner">
+          <a class="brand hero-brand" href="index.html#top">Take Care of the Island</a>
+          <div class="hero-nav-menu-wrap">
+            <div class="glass-nav-pill">
+              <a href="#top" data-i18n="nav.home">Home</a>
+              <a href="#features" data-i18n="nav.features">Features</a>
+              <a href="#gallery" data-i18n="nav.gallery">Gallery</a>
+              <a href="devlog.html" data-i18n="nav.devlog">Dev Log</a>
+              <a
+                class="glass-nav-studio"
+                href="https://ignissolarisstudio.com/?lang=en#welcome"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-studio-link
+                data-i18n="nav.studio"
+                >Ignis Solaris Studio</a
+              >
+            </div>
+          </div>
+          <div class="lang-switch lang-switch--glass" role="group" aria-label="Language">
+            <button type="button" data-lang="en" aria-current="true">EN</button>
+            <button type="button" data-lang="zh">中文</button>
+            <button type="button" data-lang="fr">FR</button>
+          </div>
+        </div>
+      </nav>
+      <div class="hero-content">
+        <p class="hero-eyebrow" data-i18n="hero.eyebrow">Turn-based strategy · simulation</p>
+        <h1 id="hero-title">Take Care of the Island</h1>
+        <p class="hero-subtitle" data-i18n="hero.tagline"></p>
+        <div class="hero-actions">
+          <a class="hero-cta" href="#features" data-i18n="hero.cta.explore">Explore the game</a>
         </div>
       </div>
     </header>
 
     <main id="main">
-      <section class="hero" id="home" aria-labelledby="hero-title">
-        <div class="hero-media" aria-hidden="true"></div>
-        <div class="hero-inner">
-          <p class="hero-eyebrow" data-i18n="hero.eyebrow">Turn-based strategy · simulation</p>
-          <h1 id="hero-title">Take Care of the Island</h1>
-          <p class="hero-tagline" data-i18n="hero.tagline"></p>
-          <div class="hero-actions">
-            <a class="hero-cta" href="#gallery" data-i18n="hero.cta.gallery">View gallery</a>
-            <a class="hero-cta hero-cta--ghost" href="#devlog" data-i18n="hero.cta.devlog">Dev log</a>
-          </div>
-          <p class="hero-scroll-hint" data-i18n="hero.scroll">Scroll to explore</p>
-        </div>
-      </section>
-
       <section class="section section--muted" id="features" aria-labelledby="features-title">
         <div class="section__inner">
           <header class="section__head">
