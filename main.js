@@ -145,6 +145,86 @@
 
   var DEVLOG = [
     {
+      date: "2026-05-10",
+      zh: {
+        title: "交互层解耦、惊恐机制深化与代码规范重构",
+        summary:
+          "简报独立与 ScanDrawerStrip；惊恐递进与医学观察结案；economy 任务队列单源读取 GameCore；target_organs / 地图状态键统一 PascalCase；显式类型与 PLAN.md 阶段修订。",
+      },
+      en: {
+        title: "Interaction-layer decoupling, deeper anxiety mechanics, and standards refactor",
+        summary:
+          "Standalone briefing + anchored scan drawer; escalating panic arcs and observation-based case closure; economy reads pending tasks only from GameCore; PascalCase organ keys everywhere; explicit typing sweep and PLAN.md phase updates.",
+      },
+      fr: {
+        title: "Découplage UI, mécaniques d’anxiété approfondies et refactor normes",
+        summary:
+          "Briefing isolé + tiroir de scan latéral ; escalation de la panique et clôture par observation médicale ; file d’attente économique unifiée via GameCore ; clés d’organes en PascalCase ; typage explicite et mise à jour de PLAN.md.",
+      },
+      detail: {
+        zh: {
+          paragraphs: [
+            "本节汇总近期在交互架构、惊恐/扫描玩法、数据一致性与 GDScript 可维护性上的集中改动；下方按主题列出要点。",
+          ],
+          bullets: [
+            "1. 交互架构重构与 UI 解耦 · 下属情报 (Briefing) 独立于回合结算，新增 BriefingPanel.tscn；顶栏 SecretBriefingBtn 随时唤出并刷新；“回合结算关闭 → 简报 → 惊恐/Ticker 触发”链路回调顺畅。",
+            "· 外部扫描抽屉：右侧锚定的 ScanDrawerStrip，带平滑展开补间；容器交叉轴对齐 (alignment = 0) 与最小尺寸限制，避免父级误拉伸。",
+            "· 惊恐弹窗 (Anxiety Popup)：恢复底板结构与警告图标，清空预设文案；新增 TitleLabel，可由配置字典传入动态标题（如「惊恐发作」）。",
+            "· 渲染与输入：GameCore.world_input_blocked 全局锁，TurnReport 等模态开启时阻断地图与摄像机输入；OrganDetailPanel 调整 mouse_filter 与 z_index，修复 UI 穿透到地图气泡的问题。",
+            "2. 核心机制深化 · 「惊恐发作」仅夏季之后生效：春末压力 ≥ 220 埋预备标记、夏季爆发；发作期每回合不可控弹窗指数倍增（1→2→4→8…），关战报后强制限制玩家视角。",
+            "· 侦破与结案（医学观察）：侧边栏「记入本轮医学观察」每回合一次；仅观察大脑可彻底结案（清焦虑链、降压）；误诊其他器官耗配额无实效；anxiety_symptom_hints_cached 防刷屏，保证战报与详情情报一致。",
+            "· 外部扫描：与回合对齐的阶梯价；单器官每回合至多 3 次（首次免费 → 80 金 +1 AP → 200 金 +2 AP）；external_scan_panel 下拉、成本预览与扣费闭环完成。",
+            "3. 数据流治理 · 废除 EconomySystem 与 GameCore 双轨 pending/active_tasks；经济侧预扣判定统一单向读取 GameCore.pending_tasks，消除脱节。",
+            "· TaskData.target_organs 与地图状态字典键全面重构为 PascalCase（如 Stomach, Heart, Brain），规避大小写寻址错误。",
+            "4. 代码规范与类型安全 · 大规模将隐式 := 改为显式类型声明或 int() 等强制转换（覆盖 organ_manager.gd、ui.gd、时间管理等），弱化跨脚本/autoload/.get() 推导缺陷引发的警告。",
+            "· organ_manager.gd 去除数组非法尾随逗号；event_manager.gd 统一 Tab/空格缩进以符合 GDScript 规范。",
+            "5. 架构文档 · PLAN.md 全面重写：阶段一原型已完工；「焦虑症表现丰富化」提升至阶段二；远期阶段三/四聚焦重要器官场景解耦与动态季节叙事。",
+          ],
+          note: "",
+        },
+        en: {
+          paragraphs: [
+            "This entry captures recent work on UI decoupling, panic/scan gameplay, data consistency, and GDScript maintainability.",
+          ],
+          bullets: [
+            "1. UI architecture & decoupling — Briefing is no longer tied to turn resolution: dedicated BriefingPanel.tscn; SecretBriefingBtn can open anytime with fresh data; smooth callback chain turn report close → briefing → panic/ticker triggers.",
+            "ScanDrawerStrip anchors to the right with tweened drawer motion; fixed cross-axis alignment (0) and min-size constraints so panels are not overstretched.",
+            "Anxiety popup: restored backdrop + warning glyph, cleared canned text; TitleLabel accepts a config dict for dynamic titles (e.g. “Panic attack”).",
+            "Input: GameCore.world_input_blocked (global lock) pauses map & camera input under TurnReport-sized modals; OrganDetailPanel mouse_filter + raised z_index stop clicks bleeding through organ bubbles.",
+            "2. Core mechanics — Escalating “panic attacks” gated after summer: spring-end stress ≥ 220 plants a prelude flag detonating in summer; uncontrollable pop-ups double each turn (1→2→4→8…); post-report viewpoint lock enforced.",
+            "Medical observation sidebar action (once per turn): observing only the brain closes the arc (clear anxiety chain, reduce pressure); mis-targeted organs consume the quota with no cure; anxiety_symptom_hints_cached keeps report vs detail clues aligned.",
+            "External scan ladder pricing per aligned turn; ≤3 scans per organ (free → 80g+1 AP → 200g+2 AP); external_scan_panel wired for dropdown choice, cost preview, and deductions.",
+            "3. Data flow — Removed dual bookkeeping of pending/active_tasks between EconomySystem and GameCore; economy now reads pending state solely from GameCore.pending_tasks.",
+            "Renamed TaskData.target_organs labels and map state dict keys to strict PascalCase (Stomach, Heart, Brain) to kill case-mismatch lookups.",
+            "4. Coding standards — Replaced wide use of inferred := with explicit var x: Type = … or casts for organ_manager.gd, ui.gd, time systems, trimming parser/autoload ambiguity warnings.",
+            "organ_manager.gd: removed illegal trailing commas; event_manager.gd: normalized tabs/spaces to GDScript style.",
+            "5. Documentation — PLAN.md rewritten: prototype phase-one done; richer anxiety presentation prioritized into phase two; longer horizon phases emphasize organ scene decoupling and dynamic seasonal narrative.",
+          ],
+          note: "",
+        },
+        fr: {
+          paragraphs: [
+            "Synthèse des travaux récents sur le découplage UI, la panique/le scan externe, la cohérence des données et le typage GDScript.",
+          ],
+          bullets: [
+            "1. Architecture UI — Briefing retiré de la résolution de tour : BriefingPanel.tscn dédié ; SecretBriefingBtn ouvrable à la demande avec rafraîchissement ; chaîne fluide fermeture du rapport → briefing → déclenchement panique/ticker.",
+            "ScanDrawerStrip ancré à droite avec animation d’ouverture tween ; alignment transversal = 0 et tailles min pour éviter l’étirement parasite.",
+            "Pop-up anxiété : socle graphique et pictogramme d’alerte restaurés, texte figé supprimé ; TitleLabel alimentée par un dictionnaire (ex. « Crise de panique »).",
+            "Entrées : verrou mondial GameCore.world_input_blocked pendant les modales type TurnReport ; mouse_filter et z_index d’OrganDetailPanel empêchant les clics de traverser vers les bulles carte.",
+            "2. Mécaniques — Crises « panique » après l’été : stress fin printemps ≥220 pose un fanion qui explose à l’été ; pop-ups incontrôlables doublées chaque tour (1→2→4→8…) ; blocage perspectif forcé après le rapport.",
+            "Observation médicale (barre latérale, 1 fois/tour) : seul le cerveau clôt la chaîne (efface anxiété, abaisse la pression) ; autres organes consomment le quota sans effet utile ; anxiety_symptom_hints_cached synchronise indices rapport/détail.",
+            "Scan externe tarifé par paliers alignés aux tours ; max 3 scans/organe/tour (gratuit → 80 or +1 PA → 200 or +2 PA) ; external_scan_panel bouclé liste, aperçu coûts et débit.",
+            "3. Données — Fin du double registre pending/active_tasks entre système économique et GameCore ; la logique lit uniquement GameCore.pending_tasks.",
+            "Clés target_organs et état carte en PascalCase strict (Stomach, Heart, Brain) pour supprimer erreurs de casse.",
+            "4. Code — Conversion massive de := implicites vers var nom: Type = … ou casts (organ_manager, ui, temps) pour éviter faux positifs/anomalies de déduction.",
+            "organ_manager.gd : virgules finales illégales supprimées ; event_manager.gd : indentation unifiée (tabs/espaces).",
+            "5. Docs — PLAN.md réécrit : phase 1 prototype bouclée ; richesse symptômes anxiété remontée en phase 2 ; phases 3/4 axes scènes d’organes dissociées et narration saisonnière dynamique.",
+          ],
+          note: "",
+        },
+      },
+    },
+    {
       date: "2026-04-29",
       zh: {
         title: "AI 上下文与文档架构落地（开发工作流）",
