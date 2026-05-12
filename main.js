@@ -145,6 +145,95 @@
 
   var DEVLOG = [
     {
+      date: "2026-05-11",
+      zh: {
+        title: "规范工作流与开发体系（架构—机制—UI—地图—文档）",
+        summary:
+          "双 Autoload 与 GameCore 全局锁；.tres 强类型、organs_state、world_flags；预扣/回合结算与 pending_tasks 单源；代谢税与代偿闭环；高血压/惊恐/扫描；UI 流式布局、阶段说明与密报降级；双 TileMapLayer 与摄像机混合控制；docs 四文档 + 叙事/代码命名双轨契约写入 PLAN/devlog。",
+      },
+      en: {
+        title: "Formalizing workflow & dev stack (architecture through docs)",
+        summary:
+          "Dual Autoload + GameCore input lock; typed .tres resources, organs_state, world_flags; budget pre-hold with turn settlement and single-source pending_tasks; metabolic tax & compensation loops; hypertension, panic, external scans; UI layout rules, phase strip & briefing demotion; dual tile layers & hybrid camera; four docs/ specs plus narrative vs code naming contract in PLAN/devlog.",
+      },
+      fr: {
+        title: "Normaliser le flux de travail et la stack (archi → docs)",
+        summary:
+          "Double Autoload + verrou d’entrée GameCore ; ressources .tres typées, organs_state, world_flags ; pré-réservation budgétaire et règlement en fin de tour avec pending_tasks unique ; taxe métabolique et boucles de compensation ; hypertension, panique, scans externes ; règles UI, bandeau de phase et briefing découplé ; double TileMapLayer et caméra hybride ; quatre docs + contrat de nommage narration/code dans PLAN/devlog.",
+      },
+      detail: {
+        zh: {
+          paragraphs: [
+            "【阶段性汇总】在既有迭代之上，将底层架构、数据形态、核心机制闭环、UI 交互、地图摄像机与工作流文档一次性对齐为可复述的「体系规范」，便于后续 AI 上下文与团队协作复用。",
+          ],
+          bullets: [
+            "一、底层架构与数据流 · 双 Autoload：废弃臃肿全局单例，落地 GameCore（主控）+ EventDispatcher（事件总线）；挂载 EconomySystem、OrganManager、TimeManager、EventManager。",
+            "· GameCore.world_input_blocked：模态（如回合结算）时切断地图与摄像机输入。",
+            "· 数据结构：以自定义资源 .tres（TaskData、EventData 等）取代松散字典数组，强类型 + 显式类型声明，废弃不可靠隐式推断。",
+            "· organs_state：高扩展状态池，WorkIntensity 枚举（基础温饱 / 负荷运转 / 极限压榨），预留生命阶段热插拔器官。",
+            "· world_flags：全局 Flag 中枢，替代基于 task_id 的局部校验；任务完成后记录不可逆分支状态（如 vzv_defense_prepared），动作与事件分支解耦。",
+            "二、核心机制与逻辑闭环 · 指令排队：预算预扣除 + 回合统一结算，侧边栏排队、资源冻结、下一回合前可取消退还；经济系统废除双轨，预扣状态统一读取 GameCore.pending_tasks。",
+            "· 经济—生理：器官代谢税为金钱主渠道；压榨 ROI 差异带来能耗与系统压力；跑通热量缺口→脂肪储备→压力→阶段结算→永久 Debuff 的代偿链。",
+            "· 局部高危：blood_pressure 逐回合累加触顶永久惩罚，配套利尿剂 / β 阻滞剂 / 血管扩张剂博弈；惊恐发作跨阶段传递、无字报错弹窗指数倍增与视角阻断，医学观察结案 + 防刷屏线索快照；外部扫描阶梯定价、下拉、成本预览与扣费闭环。",
+            "· 阶段时间：任务倒计时衰减与 is_mandatory；关键任务回合阻断；将生理叙事（如疫苗与水痘）封装为前置行为触发战役分支结算。",
+            "三、UI 与交互 · CanvasLayer 下以 Control 为基准，Margin/VBox/HBox 流式排版，慎用 Scale；Autowrap、Clip Text、纹理 Ignore Size + Custom Minimum、九宫格背景。",
+            "· 右下角「下一回合」上方新增阶段说明（中文季相+回合；婴儿期为「教学回合 (1/2)」）；密报从结算剥离为独立场景，顶栏按钮 set_loops 摆动提示，点击静止后打开，时序上可与惊恐弹窗交错。",
+            "· ScanDrawerStrip：mouse_filter = IGNORE，ScanPanelHost 精准命中区穿透空白；closed_outer_width_px 48→52 修复手柄裁切；模态弹窗后端字典→暂存→实例化注入的单向数据流。",
+            "四、空间与地图 · 双 TileMapLayer：表层 Y-Sort 等距渲染，底层 Custom Data 处理器官归属；宏观气泡 + 微观详情分层；初始化输出地契清单，鼠标→逻辑网格→字典→任务派发；canvas_transform 同步气泡与地图。",
+            "· 摄像机：右键平移、无极滚轮缩放、自动居中、气泡点击 Tween 平滑放大。",
+            "五、工作流与规范 · 本地化 docs/ 驱动开发；core_design.md、data_schema.md、devlog.md、coding_standard.md 四份断言式规则作为系统级 Prompt。",
+            "· 叙事与代码命名双轨契约：玩家可见层用岛屿治理/君主隐喻；代码与数据层强制生理学/医学标准命名（PascalCase 如 Heart、Stomach）；已同步至 PLAN.md 与 devlog.md，作为文案审计与新功能最高准则。",
+          ],
+          note: "",
+        },
+        en: {
+          paragraphs: [
+            "This entry consolidates architecture, data, mechanics, UI, map/camera, and documentation conventions into one reproducible “system spec” for collaborators and AI context.",
+          ],
+          bullets: [
+            "I. Architecture & data — Dual Autoload: GameCore (orchestrator) + EventDispatcher; modular EconomySystem, OrganManager, TimeManager, EventManager instead of a bloated global singleton.",
+            "· GameCore.world_input_blocked freezes map & camera input under modals such as turn resolution.",
+            "· Typed custom resources (.tres) for TaskData / EventData replace ad-hoc dict arrays; explicit typing replaces fragile inference.",
+            "· organs_state pool with WorkIntensity enum (subsistence / loaded / extreme squeeze) and room for future organ hot-swap by life stage.",
+            "· world_flags as a global flag hub—post-task irreversible branch state (e.g. vzv_defense_prepared) decouples actions from narrative forks without task_id-only checks.",
+            "II. Mechanics — Sidebar queue with budget pre-hold and end-of-turn settlement; cancel-before-next-turn refunds; economy reads pending state only from GameCore.pending_tasks (single source).",
+            "· Metabolic tax from organs as the primary cash channel; squeeze ROI drives energy cost and systemic pressure; calorie gap → fat drawdown → pressure → phase settlement → permanent debuff loop closed.",
+            "· Hypertension: hidden blood_pressure ramps to a hard cap with lasting penalty; diuretics, beta-blockers, vasodilators as counterplay. Panic: cross-phase carry, wordless error-style popups scaling exponentially, view lock; medical observation closes the arc with anti-spam hint snapshots. External scan: tiered pricing, dropdown, preview, deduct loop.",
+            "· Phase time: task decay timers + is_mandatory; blocking turns for critical missions; physiological beats (e.g. vaccine vs chickenpox) framed as prerequisite branches into battle outcomes.",
+            "III. UI — Control-rooted flow under CanvasLayer (margins / VBox / HBox); avoid scale hacks; autowrap, clip text, texture min sizes, nine-slice backgrounds.",
+            "· Phase strip above Next Turn (season + round; infancy as “tutorial round (1/2)”); secret briefing demoted from forced post-report to a looping top-bar nudge, open on click—can interleave with panic timing.",
+            "· Scan drawer: strip ignores mouse; host wraps hit targets; closed_outer_width_px 48→52 fixes handle clipping; modals use dict → stash → instance inject one-way pipeline.",
+            "IV. Map — Dual TileMapLayer: Y-sorted iso visuals + logic layer with custom data for organ ownership; macro bubble + micro detail split; deed registry at init; screen → grid → dict → task dispatch; canvas_transform keeps bubbles aligned.",
+            "· Camera: right-drag pan, smooth wheel zoom, auto frame, tween focus on bubble clicks.",
+            "V. Workflow — docs/-first development; four assertive specs (core_design, data_schema, devlog, coding_standard) as system prompts.",
+            "· Dual naming contract: player-facing island/sovereign metaphor vs rigorous anatomical PascalCase in code/data; recorded in PLAN.md and devlog.md as the top rule for copy audits and new features.",
+          ],
+          note: "",
+        },
+        fr: {
+          paragraphs: [
+            "Synthèse : architecture, données, mécaniques, UI, carte/caméra et conventions documentaires alignées en une « spécification système » reproductible.",
+          ],
+          bullets: [
+            "I. Archi & données — Double Autoload : GameCore + EventDispatcher ; sous-systèmes modulaires (économie, organes, temps, événements) à la place d’un singleton global lourd.",
+            "· Verrou GameCore.world_input_blocked sous modales (fin de tour, etc.).",
+            "· Ressources .tres typées (TaskData, EventData) ; typage explicite au lieu d’inférences fragiles.",
+            "· organs_state + énumération WorkIntensity ; extension future par organes branchables selon l’âge.",
+            "· world_flags : état global post-action irréversible (ex. vzv_defense_prepared), découplage des branches narrative des simples task_id.",
+            "II. Mécaniques — File latérale avec pré-réservation budgétaire et solde en fin de tour ; annulation remboursable ; lecture unique de GameCore.pending_tasks côté économie.",
+            "· Taxe métabolique des organes ; boucle déficit calorique → réserves → pression → palier → malus permanent. Hypertension, panique (pop-ups exponentielles, observation médicale), scan externe à paliers.",
+            "· Temps de phase : compte à rebours + is_mandatory ; blocage des tours pour missions clés ; récits physiologiques comme prérequis de branches de bataille.",
+            "III. UI — Control racine, conteneurs de flux ; autowrap, clip, textures, nine-slice.",
+            "· Bandeau de phase au-dessus du bouton tour suivant ; briefing secret découplé du rapport, bouton animé en boucle. Tiroir de scan : strip transparent aux clics, hôte ciblé, largeur 52 px, pipeline modal dict → inject.",
+            "IV. Carte — Double TileMapLayer ; bulles + panneau ; registre de parcelles ; pipeline souris → grille → dictionnaire ; canvas_transform.",
+            "· Caméra : panoramique clic droit, zoom molette, cadrage auto, tween sur bulle.",
+            "V. Flux — développement piloté par docs/ ; quatre documents assertifs. Contrat double nommage île/souverain côté joueur vs anatomie PascalCase côté code, inscrit dans PLAN.md et devlog.md.",
+          ],
+          note: "",
+        },
+      },
+    },
+    {
       date: "2026-05-10",
       zh: {
         title: "交互层解耦、惊恐机制深化与代码规范重构",
