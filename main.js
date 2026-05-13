@@ -145,6 +145,86 @@
 
   var DEVLOG = [
     {
+      date: "2026-05-12",
+      zh: {
+        title: "机制触发时序、空间映射精度与文案架构确立",
+        summary:
+          "春季疫苗结算前移与 vzv 标记；惊恐夏季散布、脑扫描解锁腹式呼吸；高血压秋季套件与利尿动态阈值；心脏档位自入夏且侧栏仅 HEAVY/EXTREME；世界坐标→视口与点击寻址；Bubble 黑块与 Gut/Kidneys 键名；卡路里全链路与效果路由扩充；测试面板隔离；叙事分层与后续 Voice Contract 规划。",
+      },
+      en: {
+        title: "Trigger timing, viewport mapping fidelity, and copy architecture",
+        summary:
+          "Spring VZV gate moved earlier with defense flag; panic enqueue from summer + deep-breath unlock after brain scan closes the case; autumn hypertension trio with diuretics gated by BP ratio; heart work modes from summer, sidebar shows only HEAVY/EXTREME; precise world→viewport + grid pick; bubble black-patch fix and Gut/Kidneys keys; calories pre-hold/settlement; expanded task effect routing; test UI quarantined; narrative tiering baseline set.",
+      },
+      fr: {
+        title: "Cadence des déclencheurs, précision viewport et architecture texte",
+        summary:
+          "Contrôle VZV printanier avancé + fanion de défense ; panique différée à l’été + respiration profonde après scan cerveau ; triade hypertension automnale et diurétiques seuil BP ; modes cardiaques dès l’été, barre latérale HEAVY/EXTREME ; monde→viewport et picking grille ; bulles sans artefacts, clés Gut/Reins ; calories bout en bout ; routage d’effets étendu ; UI de test isolée ; couches narratives posées.",
+      },
+      detail: {
+        zh: {
+          paragraphs: [
+            "【阶段性开发总结】机制触发时序、空间映射精度与文案架构确立：下文按核心机制、空间与视觉、数据流与任务、叙事文案四层记录。",
+          ],
+          bullets: [
+            "一、核心机制与玩法流转迭代 · 1. 教程事件与阶段结算：evt_spring_vzv_resolve.tres 将疫苗任务（春季防卫战）trigger_turn 由 4（季末）提前至 1（春季首回合结束）；结算仍强依赖 vzv_defense_prepared。提前验收使未达成防御条件时更易走向失败/惨胜，强化前期策略压迫感。",
+            "· 2. 惊恐发作（游离性焦虑）：底层 enqueue 散布生效期延后至夏季，避免婴儿期与春季（教程期）散布，与「春末武装、入夏释放」叙事对齐。实装「深度腹式呼吸」条件解锁：仅渐进惊恐链激活且对 Brain 外部扫描并成功结案后入池（deep_breath_unlocked_by_brain_scan）。",
+            "· 3. 高血压与心脏压榨：废弃开局常驻；「开闸泄洪（利尿剂）」「引擎限速（β阻滞剂）」「河道拓宽（血管扩张剂）」统一秋季条件触发；利尿指令动态显隐，仅血压相对上限 ≥0.45 时进入活跃任务池。",
+            "· 「心脏运转档位」自 current_stage >= SUMMER 下发；不再单独派发 NORMAL 任务卡片，侧栏长期仅 HEAVY 与 EXTREME，与「未超频即常态」的底层预期对齐，优化 UI 空间。",
+            "二、空间映射与视觉反馈 · 1. 坐标：地契质心改为 logic_layer.to_global(map_to_local(cell))；新增 WorldToViewport2D 供 Camera2D 换算气泡视觉锚点偏移。",
+            "· 2. 点击寻址：MapManager 鼠标交互 to_local + local_to_map，网格中心点采用全局坐标，与摄像机聚焦逻辑一致。",
+            "· 3. BubbleManager：器官指示器无贴图/未完成样式化时的黑块修复——各 organ_bubble 默认隐藏、PROCESS_MODE_DISABLED，图标层 visible=false；IndicatorsContainer 清理仅移除自身关联指示器，避免误删 Bubble_* 基础节点。",
+            "· 4. 数据键：Stomach 全面替换为 Gut（TileSet 自定义数据、任务配置、Bubble 节点名对齐）；GameCore.organs_state 与底层地图新增打通 Kidneys。",
+            "三、底层数据流与任务系统 · 1. 卡路里：EconomySystem 与 TaskData 实装 calories_cost、queued_calories_cost；入队校验、顶栏预扣（AP/金钱/卡路里）、回合结算实扣全链路。",
+            "· 2. 效果路由：扩展 _execute_task_effect，新增 heart_med_01、heart_beta_01、heart_vaso_01、heart_work_*、global_breath_01 等解析与结算；利尿指令统一数据开销（50 金 + 100 卡、扣 40 水压）。",
+            "· 3. 测试面板：高血压、心脏档位等迁入正式任务与结算；TestAddTaskButton 及测试面板保留但默认隐藏并切断视觉依赖，保证正式玩法独立。",
+            "四、叙事与文案基建 · 以「春季防卫战」行文气质为基准（群岛/防线/战报感 + 生理隐喻）；划分系统短提示与战报体层级（系统提示可刻意冰冷简短以反衬战报厚度）。后续计划梳理 Voice Contract 与金句锚点；工程侧考虑将叙事长文本迁入常量字典或 Localization，保持代码整洁。",
+          ],
+          note: "",
+        },
+        en: {
+          paragraphs: [
+            "Phased summary: mechanic trigger cadence, tighter world→screen mapping, and a first pass at copy/narrative layering conventions.",
+          ],
+          bullets: [
+            "I. Core loop & pacing — Spring VZV resolution: evt_spring_vzv_resolve.tres moves the vaccine / spring-defense trigger_turn from 4 (end of spring) to 1 (after the first spring turn); resolution still hard-depends on vzv_defense_prepared. Earlier gate raises odds of fail/pyrrhic branches if the player is unprepared.",
+            "Panic (dissociative anxiety): underlying enqueue spread now starts in summer—no longer seeds in infancy/tutorial spring, matching “arm by late spring, release in summer.” “Deep diaphragmatic breathing” unlocks only when the progressive panic chain is active and an external brain scan closes the case (deep_breath_unlocked_by_brain_scan).",
+            "Hypertension & cardiac load: removed always-on start-of-run meds; diuretic / beta-blocker / vasodilator pack is autumn-gated; diuretic tasks are dynamically shown only when relative BP ceiling ≥ 0.45.",
+            "Cardiac work-intensity tasks issue from SUMMER onward; the NORMAL card is no longer issued separately—the sidebar keeps HEAVY and EXTREME only, aligning UI with “baseline is not overclocked.”",
+            "II. Space & visuals — Deed centroids use logic_layer.to_global(map_to_local(cell)); WorldToViewport2D supports Camera2D-consistent bubble anchor offsets.",
+            "Map picking: MapManager uses to_local + local_to_map; emitted cell centers are in global space, matching camera focus.",
+            "BubbleManager: default-hide organ bubbles, PROCESS_MODE_DISABLED, forced icon visibility off to kill black placeholders; IndicatorsContainer cleanup only removes owned indicators, not base Bubble_* nodes.",
+            "Data keys: Stomach renamed to Gut across TileSet custom data, tasks, and bubble nodes; Kidneys wired through GameCore.organs_state and the map.",
+            "III. Data & tasks — Calories: calories_cost + queued_calories_cost end-to-end (enqueue checks, top-bar pre-hold with AP/money/calories, turn settlement).",
+            "Effect routing: _execute_task_effect handles heart_med_01, heart_beta_01, heart_vaso_01, heart_work_*, global_breath_01; diuretic costs normalized (50 gold, 100 kcal, −40 water pressure).",
+            "Test UI: hypertension and cardiac modes live in production task flow; legacy test buttons/panels stay but hidden by default with visual coupling removed.",
+            "IV. Narrative baseline — Player-facing tone anchored on the “spring defense” briefing (archipelago / line / dispatch + physiological metaphor). System toasts stay terse and cold vs. richer “dispatch” body copy. Next: a voice contract + headline anchors; consider moving long copy into const tables or Localization.",
+          ],
+          note: "",
+        },
+        fr: {
+          paragraphs: [
+            "Synthèse de phase : cadence des déclencheurs, précision monde→viewport, et premières règles de stratification narrative.",
+          ],
+          bullets: [
+            "I. Boucle & rythme — Résolution VZV printanière : trigger_turn passe de 4 à 1 dans evt_spring_vzv_resolve.tres ; toujours conditionné par vzv_defense_prepared ; fenêtre plus courte pour branches échec/pyrrhiques.",
+            "Panique : propagation enqueue repoussée à l’été ; respiration profonde du diaphragme après chaîne active + scan externe du cerveau clôturé (deep_breath_unlocked_by_brain_scan).",
+            "Hypertension / cœur : fin du pack médicamenteux dès le début ; automne pour diurétique / bêta-bloquant / vasodilatateur ; diurétique visible seulement si plafond tensionnel relatif ≥ 0,45.",
+            "Charge cardiaque dès l’été : plus de carte NORMAL séparée ; barre latérale HEAVY / EXTREME seulement.",
+            "II. Espace & bulles — Centroides : logic_layer.to_global(map_to_local(cell)) ; WorldToViewport2D pour ancres bulles cohérentes avec la caméra.",
+            "Souris : to_local + local_to_map ; centres de cellule en coordonnées globales.",
+            "BubbleManager : masquage par défaut, mode process désactivé, icônes masquées pour supprimer les plaques noires ; nettoyage IndicatorsContainer sans toucher aux Bubble_* de base.",
+            "Clés : Stomach → Gut ; Reins (Kidneys) reliés à organs_state et à la carte.",
+            "III. Données & tâches — Calories : coûts et pré-réservation jusqu’au règlement de tour ; barre supérieure tri-dimensionnelle.",
+            "Routage d’effets : heart_med_01, heart_beta_01, heart_vaso_01, heart_work_*, global_breath_01 ; diurétique : 50 or, 100 kcal, −40 pression hydrique.",
+            "UI de test : logique migrée ; boutons/panneaux de test conservés mais cachés par défaut.",
+            "IV. Narration — Ton de référence « bataille de défense printanière » ; toasts système froids et courts vs. corps de texte type dépêche ; suite : contrat de voix, ancres phares, externalisation vers tables ou localisation.",
+          ],
+          note: "",
+        },
+      },
+    },
+    {
       date: "2026-05-11",
       zh: {
         title: "规范工作流与开发体系（架构—机制—UI—地图—文档）",
