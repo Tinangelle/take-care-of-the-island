@@ -145,6 +145,80 @@
 
   var DEVLOG = [
     {
+      date: "2026-05-13",
+      zh: {
+        title: "叙事拆分、UI 深度排版与试玩体验调优",
+        summary:
+          "OrganDetailPanel 左缘锚定让出主画面；TaskQueueItem 单行盒模型与倒计时最小宽度补偿；TurnReportPanel 与密报职责拆分 + ScrollContainer；Briefing BBCode 阅读层级；外部扫描占位与 Brain 置底；Camera Fit 与左栏偏移；BCG/VZV 新手与防卫战拆分；Demo 隐匿大脑线索；game_core UID 与 BCG .tres 引用修复。",
+      },
+      en: {
+        title: "Narrative split, deep UI layout, and demo pacing polish",
+        summary:
+          "OrganDetailPanel docked left; TaskQueueItem single-line layout + countdown min-width; TurnReportPanel scoped to special battle copy with scroll cap, vitals moved to Briefing; briefing section order; external-scan placeholder + Brain sorted last; camera fit to organ bounds with right offset; BCG vs VZV tutorial split; demo flags hide Brain hints until unlock chain; scene UID / BCG resource refs fixed.",
+      },
+      fr: {
+        title: "Scission narrative, mise en page UI poussée et rythme démo",
+        summary:
+          "Panneau organe ancré à gauche ; file de tâches une ligne + largeur min compte à rebours ; rapport de tour limité aux événements spéciaux avec défilement, signes vitaux au briefing ; ordre des sections ; scan externe avec placeholder et Cerveau en bas ; caméra ajustée aux bornes d’organe + décalage droite ; BCG vs VZV ; drapeaux démo masquant le cerveau ; UID de scène et références BCG corrigées.",
+      },
+      detail: {
+        zh: {
+          paragraphs: [
+            "【阶段性开发总结】叙事拆分、UI 深度排版与试玩体验调优：下文按 UI 与交互、摄像机、核心机制与叙事、底层治理四层记录。",
+          ],
+          bullets: [
+            "一、UI 架构与交互反馈优化 · 区域详情面板 (OrganDetailPanel) 布局重构：废除屏幕正中显示，改为「左侧边缘垂直居中」锚定（左留白约 16px，面板宽约 280px），为地图渲染让出主视觉空间。",
+            "· 任务队列卡片 (TaskQueueItem) 盒模型排错：明确单行不换行；标题向右延展（EXPAND_FILL + clip_text），倒计时向左延展（SIZE_SHRINK_END + 关闭 clip_text）；新增 _apply_countdown_minimum_width() 动态补偿倒计时最小宽度，消除边缘字符被裁切。",
+            "· 结算弹窗 (TurnReportPanel) 与密报解耦：结算弹窗仅负责拼接与展示「特殊事件战报」，并实装 ScrollContainer 限制最大高度以防长文撑屏；常规「卡路里」「压力」等身理数据转移至密报面板。",
+            "· 密报 (Briefing) 信息流重组：调整 build_subordinate_briefing_bbcode() 输出顺序——身理台账 → 舆情监察和指导建议 → 待执行队列 → 各辖区税负与生产负荷。",
+            "· 外部扫描面板交互防呆：下拉首项新增「— 请选择区域 —」占位；未选定区域时锁定执行按钮；列表排序底层干预，强制将「大脑 (Brain)」置底。",
+            "二、空间映射与摄像机逻辑 · 摄像机动态自适应缩放 (Camera Fit)：map_manager.gd 新增 get_organ_region_bounds_global，提取器官全部网格单元的全局包围盒；点击气泡后摄像机按包围盒算缩放使地貌整区入画，并自动向右偏移以补偿左侧 UI 遮挡。",
+            "三、核心机制与叙事流转 · 新手引导与主线防卫战拆分 (BCG vs VZV)：卡介苗 (BCG) 承接绝对新手阻断——婴儿首回合由事件补发、寿命 2 回合、仅在婴儿期末段 (2/2) 拦截推进且只配胜利战报分支。",
+            "· 水痘 (VZV)：剥离 is_mandatory；推送时机为婴儿期第 2 回合结束（视同入春第一刻），寿命 4 回合，春季末尾按完成状态触发战役分支结算。",
+            "· Demo 试玩与进度控制：引入 demo_symptom_hints_exclude_brain 与 demo_external_scan_include_brain_while_anxiety 等变量；在惊恐链激活及深度腹式呼吸等任务解锁前，将「大脑」从外部扫描列表与系统舆情线索中隐匿，引导优先巡查其他器官大区。",
+            "四、底层排错与代码治理 · 场景资源 UID：清理 game_core.tscn 启动时 invalid UID；卡介苗任务推送与结算引用更新为 .tres 真实 UID，稳定资源加载序列。",
+          ],
+          note: "",
+        },
+        en: {
+          paragraphs: [
+            "Phased summary: narrative/tutorial split, tighter UI layout and briefing hierarchy, camera framing around organ regions, demo gating for Brain visibility, and resource UID hygiene.",
+          ],
+          bullets: [
+            "I. UI & feedback — OrganDetailPanel: moved from screen center to a left-edge, vertically centered dock (~16 px inset, ~280 px wide) to keep the map as the hero frame.",
+            "TaskQueueItem: enforced single-line layout; title grows with EXPAND_FILL + clip_text; countdown uses SIZE_SHRINK_END without clipping; _apply_countdown_minimum_width() prevents glyph clipping at the edge.",
+            "TurnReportPanel vs Briefing: report modal now only assembles/displays special-event battle copy with a ScrollContainer height cap; routine vitals (calories, stress, etc.) live in the briefing stream.",
+            "Briefing: build_subordinate_briefing_bbcode() order is body ledger → sentiment watch & guidance → pending queue → regional tax/production load.",
+            "External scan: first dropdown row is “— select a region —”; execute stays disabled until a real pick; sort logic pins Brain to the bottom.",
+            "II. Camera — Camera fit: map_manager.gd adds get_organ_region_bounds_global; after bubble click the camera zooms to fit the organ’s hex footprint and shifts right to clear the left UI rail.",
+            "III. Systems & narrative — BCG vs VZV: BCG is the hard tutorial gate—issued on the infant’s first turn via events, 2-turn lifespan, blocks only on the last infant phase (2/2), win-only report branch.",
+            "VZV: no longer mandatory; fires at end of infant turn 2 (spring threshold), 4-turn lifespan, spring-end resolution branches on preparedness.",
+            "Demo pacing: demo_symptom_hints_exclude_brain and demo_external_scan_include_brain_while_anxiety hide Brain from external scans and symptom hints until the panic chain and unlocks such as deep diaphragmatic breathing are active.",
+            "IV. Hygiene — game_core.tscn invalid placeholder UIDs removed; BCG push/settlement paths point at real .tres UIDs for stable load order.",
+          ],
+          note: "",
+        },
+        fr: {
+          paragraphs: [
+            "Synthèse : découplage tutoriel / défense, hiérarchie UI & briefing, cadrage caméra par organe, masquage cerveau en démo, UID propres.",
+          ],
+          bullets: [
+            "I. UI — OrganDetailPanel ancré à gauche (~16 px, ~280 px) au lieu du centre pour libérer la carte.",
+            "TaskQueueItem : une ligne ; titre EXPAND_FILL + clip_text ; compte à rebours SIZE_SHRINK_END sans clip ; _apply_countdown_minimum_width() évite la coupe des glyphes.",
+            "TurnReportPanel : uniquement rapports d’événements spéciaux + ScrollContainer ; signes vitaux dans le briefing.",
+            "Briefing : ordre corps → veille / conseils → file → fiscalité & charge par région.",
+            "Scan externe : ligne vide « — choisir une région — », bouton verrouillé sans choix ; Cerveau forcé en bas de liste.",
+            "II. Caméra — get_organ_region_bounds_global ; zoom sur l’emprise hex + décalage droit pour le panneau gauche.",
+            "III. Narration — BCG : tutoriel bloquant, 2 tours, blocage phase 2/2, branche victoire seule.",
+            "VZV : plus obligatoire ; fin du 2e tour bébé, 4 tours, branches fin de printemps.",
+            "Démo : variables pour masquer le cerveau dans scans et indices jusqu’à panique / respiration profonde.",
+            "IV. UID — game_core.tscn nettoyé ; références BCG alignées sur les .tres réels.",
+          ],
+          note: "",
+        },
+      },
+    },
+    {
       date: "2026-05-12",
       zh: {
         title: "机制触发时序、空间映射精度与文案架构确立",
