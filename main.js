@@ -145,6 +145,105 @@
 
   var DEVLOG = [
     {
+      date: "2026-05-16",
+      zh: {
+        title:
+          "双 Autoload 主干定型：单向数据流、春夏季玩法与容器化 UI/地图的工程宪章汇总",
+        summary:
+          "GameCore/EventDispatcher 双核与子系统挂载、world_input_blocked 模态输入锁、.tres 强类型资源与单向数据流、world_flags；排队预扣影子变量与单源 pending_tasks；卡路里/代谢税/高血压/惊恐/春季双轨与熬夜；UI 容器规范与 Briefing/TurnReport/ScanDrawer/AP 超限/sidebar 过滤；双层 TileMap、气泡计数与 Camera Fit；docs/ 契约与 Gut/Kidneys 红线。",
+      },
+      en: {
+        title: "Dual-autoload spine, unidirectional flow, and spring/summer systems codified",
+        summary:
+          "GameCore + EventDispatcher with mounted subsystems, modal input freeze, typed Task/Event resources, dispatcher broadcast loop, global flags; shadow queued costs & single-source pending queue; calorie/tax/BP/anxiety arcs, dual spring tracks & all-nighter; container UI rules plus briefing/report/scan/AP overflow/sidebar gating; dual tilemaps, bubble counts, camera fit; local docs covenant & organ key hygiene.",
+      },
+      fr: {
+        title: "Autoload double, flux univoque et ergonomie carte/UI cadrés",
+        summary:
+          "GameCore/EventDispatcher avec sous-systèmes, verrou d’entrée modal, ressources .tres typées, drapeaux mondiaux, file prélevée mono-source ; chaîne calorie/taxe/TA/panique, double voie printanière et nuit blanche ; UI en conteneurs, briefings, tiroir scan, AP au-delà du plafond ; double TileMap, bulles, caméra ajustée ; docs locales et clés organes.",
+      },
+      detail: {
+        zh: {
+          paragraphs: [
+            "【2026-05-15 ~ 05-16 综合纪要】将近期底层架构、玩法闭环、UI/地图工程与文档契约一次性收束为可检索的里程碑清单；与 05-13 单列条目互为补充——本条侧重原理与范式，彼条侧重当次落地的界面与叙事微调。",
+          ],
+          bullets: [
+            "一、底层核心与数据流 · 双 Autoload：以 GameCore 为主控节点、EventDispatcher 为全局事件总线，分拆早期臃肿单例；EconomySystem、OrganManager、TimeManager、EventManager 等业务模块挂载 GameCore 下解耦运转。",
+            "· world_input_blocked：在高权重模态（TurnReportPanel、BriefingPanel 等）期间全局切断 2D 地图与摄像机输入，避免多层穿透。",
+            "· 强类型资产：弃用隐式字典数组，TaskData / EventData 等以自定义资源 .tres 管理，可在 Inspector 可视化调参。",
+            "· 单向通信：UI 触发指令 → GameCore 安全结算 → EventDispatcher 广播 → UI 监听刷新。",
+            "· world_flags：以全局状态字典记录不可逆行为标记（如 vzv_defense_prepared），替代高耦合 task_id 校验链。",
+            "二、玩法与经济生理 · 指令排队：预算预扣除 + 回合统一结算；影子变量 queued_ap_cost / queued_money_cost / queued_calories_cost 与 pending_tasks；下回合前可取消并安全退还；经济侧单源读取 GameCore.pending_tasks，废除双轨。",
+            "· 卡路里链：TaskData.calories_cost 与预扣链跑通；热量缺口 → 脂肪储备 → 耗尽转 health_stress → 跨阶段结算 → 永久 Debuff。",
+            "· 代谢税与 ROI：中央财政来自器官上缴；WorkIntensity（温饱/负荷/极限）与 stress_penalty；器官差异化回报（如脑高收益高耗卡、心低收益高压）。",
+            "· 高血压：心脏 HEAVY/EXTREME 累加 blood_pressure，触顶「主干道决堤」永久扣最大 AP；利尿（金+卡，短期扣水压，BP 相对上限 ≥0.45 才入池）、β 阻滞耗 AP 锁心脏恶化、血管扩张钜款抬高 bp_max_capacity。",
+            "· 惊恐链：health_stress 阈值轮询（>200 偶发、>400 爆发），跨阶段预埋夏季爆发；发作时指数级倍增无字报错弹窗并封锁视角；破局移除旧「脑部扫描医学观察」重叠：惊恐激活后 Brain 微观面板直接下发「深度腹式呼吸」（exclude_from_region_indicator_count）；执行成功后清除链并 anxiety_block_stress_reactivation_once 冷却，连续两生命相位 health_stress<500 亦可自然平息。",
+            "· 春季双轨：Data/Tasks 学业（Brain，4AP）与社交（Heart，3AP），lifespan_turns 与春季 4 回合对齐、入春重置；完成度改阶梯计数 spring_academic_weeks_done / spring_social_weeks_done，仅在队列执行且回合结算时累计，满 4/4 春末判定通过；不达标则未完成学业写入 spring_academic_failed 全局标记，未完成社交对生理主干 +80 压力。",
+            "· 熬夜 All-nighter：Heart 挂载、可重复、即时执行 +2AP、+50 压力并强制 150 卡亏空（走脂肪/压力代偿）；queue_task 拦截不入预扣队列。",
+            "· 时效强制：lifespan_turns、is_mandatory，由 EconomySystem 衰减归零；未完成强制任务阻断推进（教学/防线不能被恶意跳过）。",
+            "· BCG/VZV：BCG 绝对新手阻断、婴儿首回合事件补发、寿命 2 回合、仅婴儿期末 2/2 拦截推进且胜利战报；VZV 非强制、延后至婴儿第 2 回合结束触发、寿命 4 回合、春末按 world_flags（军费防线投资）分发惨胜/大胜等分支。",
+            "三、UI/UX 框架 · CanvasLayer 下 UIRoot 全屏基准；禁止滥用 Scale，以 Margin/VBox/HBox 流式嵌套自适应。",
+            "· 文本全局 Autowrap (Word)+Clip；大图标 TextureButton 用 Ignore Texture Size + Custom Minimum Size + Keep Aspect Centered；背景 NinePatch / StyleBoxTexture + Texture Margin 防圆角拉糊。",
+            "· TurnReportPanel 独立场景，职责限定战报长文 + ScrollContainer 高度帽；BriefingPanel 脱离强弹节奏，顶栏按钮 loop 摆动提示，点开静止并可随时翻阅；BBCode 顺序：生理台账 → 舆情与建议 → 排队反馈 → 辖区税负负荷。",
+            "· ScanDrawer：靠右抽屉；外层 Mouse Filter IGNORE + 宿主精准包裹交互区以避免空白挡点击；占位首项锁住执行；列表排序 Brain 置底（与既有条目一致）。",
+            "· OrganDetailPanel：左缘垂直居中固定宽，释放中央地图主视觉（与 05-13 条一致复述范式）。",
+            "· AP 顶栏：支持超限展示（如 7/5）；预扣格式「可支配(-排队)/上限」警示色；TaskData.show_in_task_sidebar：主线免疫战役进左侧主栏，其余（腹式呼吸、春课/社交、心脏升档等）仅在器官微观面板显示，降噪侧栏。",
+            "四、地图与摄像机 · VisualLayer（31 单图六角 + Y-Sort）与 LogicLayer（隐藏格 + Custom Data organ_id）解耦属权与地貌；logic_layer.to_global(map_to_local(cell)) 质心与 WorldToViewport2D→Camera2D 气泡锚点。",
+            "· OrganIndicator：task_count>0 才 show，否则 hide；Brain 特异任务 exclude_from_region_indicator_count 不计气泡数，地图点击仍可 organ_detail_requested；黑块规避：未完成样式实例默认隐藏 PROCESS_MODE_DISABLED，清理限自身子指示器。",
+            "· CameraController：右键平移、滚轮缩放、点击空白格轻微取景回弹属设计内行为；Camera Fit：get_organ_region_bounds_global 计算 focus_zoom_level + Tween，右偏移补偿左栏遮挡。",
+            "五、规范与文档 · 根目录 docs/ 上下文库与四断言文档：core_design、data_schema、devlog、coding_standard；玩家文案群岛隐喻 vs 代码 PascalCase 生理英名；Stomach→Gut 与 Kidneys 键统一；核心脚本显式类型化减少隐式告警；排查 game_core 与战役 .tres 的 invalid UID，绑定真实磁盘 UID。",
+          ],
+          note: "登记日期跨度 2026-05-15 ~ 2026-05-16；与后续单日条目可对读。",
+        },
+        en: {
+          paragraphs: [
+            "Consolidated 15–16 May 2026 notes: architecture, economy/physiology loops, UI/map engineering, and the local docs covenant—companion to the 13 May focused UI/tutorial patch list.",
+          ],
+          bullets: [
+            "Architecture — Dual autoload spine: GameCore plus EventDispatcher replaces a bloated singleton; EconomySystem, OrganManager, TimeManager, and EventManager mount under GameCore.",
+            "Modal input freeze: GameCore.world_input_blocked cuts map and camera input while TurnReport/Briefing-style panels are up to stop click bleed-through.",
+            "Typed authoring: TaskData/EventData (.tres) replace implicit dictionary arrays with inspector-safe tuning.",
+            "Unidirectional flow: UI intents → GameCore settlement → dispatcher fan-out → reactive UI refreshes.",
+            "Global flags: world_flags stores irreversible markers (e.g. vzv_defense_prepared) instead of fragile task_id coupling.",
+            "Economy queue — Frozen budgets via queued_ap_cost / queued_money_cost / queued_calories_cost and pending_tasks; cancel-before-advance restores resources; Economy reads a single pending_tasks source.",
+            "Calorie metabolism: calorie costs join the freeze/settle pipe; deficits burn fat → stress spikes → staged penalties → lasting debuffs.",
+            "Tax + ROI loop: treasury income modeled as organ “metabolism taxes” with WorkIntensity tiers and differentiated stress_penalty payouts (brain vs heart archetypes).",
+            "Hypertension: cardiac overload stacks blood_pressure; breach applies permanent AP cap damage; toolkit includes gated diuretic rescue, beta-block lock, and expensive vasodilator capacity raises.",
+            "Panic cascade: staged health_stress polling drives summer-peaking outbreaks and UI spoofing bursts; remediation moves “deep diaphragmatic breathing” onto the brain detail panel once the chain fires, excludes bubble counts, adds a one-shot stress re-entry guard, or natural decay if stress stays calm across phases.",
+            "Spring forks: stacked academic vs social lanes with lifespan tied to spring length, week counters incremented only while queued executions resolve, branching failures into flags or massive stress shocks.",
+            "All-nighter: instant +AP with stress+caloric debt, repeatable, blocked from the pre-hold pipeline.",
+            "Temporal gating: lifespan_turns decay with mandatory interrupts for unfinished critical orders.",
+            "BCG/VZV split: hardened tutorial vaccination gate vs elective late-infancy zoster defense with branching spring resolutions driven by preparedness flags.",
+            "UI canon — Flow layout under full-screen UIRoot; forbid scale hacks; clamp text/icons/panels via wrap, clip, min sizes, nine-patch margins.",
+            "Turn report stays battle prose + scroll clamp; briefing becomes asynchronous with animated nav affordance and ordered BBCode slices.",
+            "Scan drawer ignores mouse outside the grip; placeholder row locks execution; Brain sorted last.",
+            "AP HUD shows over-cap totals and parenthetical frozen AP; sidebar visibility flag keeps macro panel clean while specialty tasks remain organ-local.",
+            "Map stack — Separate visual and logic TileMapLayers with organ metadata; viewport projection keeps bubble anchors aligned with camera motion.",
+            "Indicators hide on zero workloads; exclusions keep breathing tasks invisible in counts without losing tile picks.",
+            "Camera fit tween frames organ envelopes and offsets right to clear left-side chrome.",
+            "Process — Local docs quartet, metaphor copy vs anatomical PascalCase identifiers, Gut/Kidneys key hygiene, stronger typing cleanup, UID integrity on game_core.tscn and campaign tres.",
+          ],
+          note: "Covers both 2026-05-15 and 2026-05-16; intentionally overlaps with narrower daily entries where features shipped incrementally.",
+        },
+        fr: {
+          paragraphs: [
+            "Notes consolidées 15–16 mai 2026 : socle dual-autoload, chaîne données→UI, boucles printemps/été, ergonomie carte, pacte docs/ — pendant à l’entrée du 13 mai centrée patch UI/tutorial.",
+          ],
+          bullets: [
+            "Architecture : GameCore + EventDispatcher ; sous-systèmes modulaires ; verrou modal world_input_blocked ; ressources typées (.tres) ; flux uni UI→cœur→bus→UI ; world_flags.",
+            "File d’intentions : coûts gelés pending_tasks ; annulation avant tour ; calorie/métabolisme avec dette Graisses→stress.",
+            "Fiscalité d’organes : intensités de travail, pénalités différenciées, crises hypertensives et triade thérapeutique conditionnelle.",
+            "Panique : seuils dynamiques ; rupture avec respiration diaphragmatique hors compteur de bulle.",
+            "Printemps double voie ; nuit blanche hors pré-déduction ; lifespan & mandatory gates ; BCG vs VZV scindés comme tutoriel répressif vs campagne retardée.",
+            "UI : conteneurs stricts sans scale abusif ; rapport modal limité au texte épique ; briefings hors synchronisation forcée.",
+            "Double TileMap logicielle/visuelle ; bulles synchronisées caméra ; encadrement automatique avec décalage droit.",
+            "Gouvernance : docs locales, nomenclature Gut/Reins/PascalCase, typage plus explicite, UID réels sur scène/.tres.",
+          ],
+          note: "Dates groupées pour lecture longue durée avec les jalons précédents.",
+        },
+      },
+    },
+    {
       date: "2026-05-13",
       zh: {
         title: "叙事拆分、UI 深度排版与试玩体验调优",
